@@ -20,9 +20,13 @@ This feature is currently in beta stage. You need to contact @NikoCat233 on Disc
 
 ## User Verify Example
 Verify success will only be shown once. 
+
 Guest account will see "You communication settings are blocking you from joining the game."
+
 NotAuthorized users will see "You need an Among Us account to play online."
+
 In all other cases, "game not found" will be displayed.
+
 ### Verify Success
 ![alt text](image.png)
 ### Guest Account
@@ -32,8 +36,11 @@ In all other cases, "game not found" will be displayed.
 
 ## Note
 Currently the api can only show whether a player is using a real account to join the server, or they did not join the server.
+
 Guest account is global prevented from the server so the api can not detect it, and will not respond to guest account requests.
+
 You can only see NotVerified or Verified from the api.
+
 The player needs to join the server with both http requests and udp requests. If the player is unable to join the server, they wont be verified.
 
 ## API Endpoints
@@ -56,7 +63,9 @@ All the requests should be sent with json and will be answered with json.
     "ExpiresAt": "2025-02-03T11:43:08Z"
 }
 ```
-The expiration time is displayed in UTC and is 10 minutes after the request is created. The verify code is the room code provided to the player.
+The expiration time is displayed in UTC and is 10 minutes after the request is created. 
+
+The verify code is the room code provided to the player.
 
 ### GET
 `?apikey=api_key_here&verifycode=ABCDEF`
