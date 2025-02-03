@@ -43,12 +43,15 @@ You can only see NotVerified or Verified from the api.
 
 The player needs to join the server with both http requests and udp requests. If the player is unable to join the server, they wont be verified.
 
+Magic friendcode: kidcode#8888 for players that disabled friendcode feature with KWS parent portal. nocode#9999 for players who has not yet set up their friendcode.
+
 ## API Endpoints
 ### Request URL
 `https://au-verify.niko233.me/api/verify`
 All the requests should be sent with json and will be answered with json.
 
 ### PUT
+Used to create a verify request, respond with the verify code(also game/room code) created.
 ```json
 {
     "apikey": "api_key_here"
@@ -68,6 +71,7 @@ The expiration time is displayed in UTC and is 10 minutes after the request is c
 The verify code is the room code provided to the player.
 
 ### GET
+Used to query the verify status of a verify request.
 `?apikey=api_key_here&verifycode=ABCDEF`
 
 #### Return
@@ -111,6 +115,7 @@ The fields `"ExpiresAt": "2025-02-03T11:43:08Z"`, `"FriendCode": "***#****"`, `"
 ```
 
 ### DELETE
+Used to delete a verify request before it automatically expires. Suggest deleting instantly after you get all the necessary data.
 ```json
 {
     "apikey": "api_key_here",
