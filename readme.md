@@ -22,7 +22,9 @@ This feature is currently in beta stage. You need to contact @NikoCat233 on Disc
 ## User Verify Example
 Verify success will only be shown once. 
 
-Guest account will see "You communication settings are blocking you from joining the game."
+~~Guest account will see "You communication settings are blocking you from joining the game."~~
+
+Guest account is **no longer blocked** after 2025.2.23. To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account. TokenPlatform is also shown to users that has verified.
 
 NotAuthorized users will see "You need an Among Us account to play online."
 
@@ -31,20 +33,25 @@ In all other cases, "game not found" will be displayed.
 ### Verify Success
 ![alt text](image.png)
 ### Guest Account
+Check TokenPlatform in Verify Response. Also present on the verisy message to players.
 ![alt text](image-1.png)
 ### NotAuthorized
 ![alt text](image-2.png)
 
 ## Note - Read carefully
-Currently the api can only show whether a player is using a real account to join the server, or they did not join the server.
+~~Currently the api can only show whether a player is using a real account to join the server, or they did not join the server.~~
 
-**Guest account is global prevented from the server** so the api can not detect it, and will not respond to guest account requests.
+~~**Guest account is global prevented from the server** so the api can not detect it, and will not respond to guest account requests.~~
+
+To check Guest account, you need to read **TokenPlatform**. "deviceid" in it is guest account. No other flags are provided for guest account.
 
 You can only see **NotVerified, HttpPending, Verified or Expired** from the api.
 
 The verify process is contained of two part: http auth and udp join game. If the player is unable to join the server but did input their game code and is received by the server's http auth part, they will get verify status set to **HttpPending** and **do show a friendcode and hashedPuid** in verify request. After they join the server from udp part, more data will be added to verify request and verify status is then changed to **Verified**.
 
 Magic friendcode: kidcode#8888 for players that disabled friendcode feature with KWS parent portal. nocode#9999 for players who has not yet set up their friendcode.
+
+**Guest account** will have friendcode other than magic friendcodes listed above only if they are **hacking**.
 
 TokenPlatform in verify request is the platform got directly from InnerSloth api and is **100% accurate**. But there is no official or standard document of these values and we don't fully understand **which string matches what platform**. UdpPlatform is from udp join game part and is set by client itself. This can be **spoofed** with hack menu.
 
@@ -186,7 +193,6 @@ Server error will also be answered by dotnet core with following format
         NotVerified,
         Verified,
         Expired,
-        GuestAccount, // Not used
         BannedByServer, // Not used
         BannedByEAC, // Not used
         NotFound,
@@ -196,7 +202,9 @@ Server error will also be answered by dotnet core with following format
         HttpPending
     }
 ```
-GuestAccount, BannedByServer(Banned by Niko), BannedByEAC(The Enhanced Network) is not added currently.
+BannedByServer(Banned by Niko), BannedByEAC(The Enhanced Network) is not added currently.
+
+To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account.
 
 ```codes
     public sealed class VerifyRequest
@@ -287,9 +295,11 @@ This is the Platform officially provided by InnerSloth in game codes. We acquire
         epicgames
         steam
         itchio
-        #deviceid //Guest account, you wont see this from api
+        deviceid //Guest account, you need to check at your side. We no longer provide other flags for guest account except this one.
         xbl // Microsoft store version, not sure whether xbox console is using this string
         ## this list is incomplete, Niko never see console players' token.
     }
 ```
 These platform strings is directly read from InnerSloth's http api. It is 100% accurate, showing the account type of the user and can not be spoofed. But we don't completely know how it matches Platforms flag provided in game codes and this list is also missing some of the strings.
+
+To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account.
