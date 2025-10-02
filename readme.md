@@ -24,7 +24,11 @@ Verify success will only be shown once.
 
 ~~Guest account will see "You communication settings are blocking you from joining the game."~~
 
-Guest account is **no longer blocked** after 2025.2.23. To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account. TokenPlatform is also shown to users that has verified.
+~~Guest account is **no longer blocked** after 2025.2.23. To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account. ~~
+
+Guest account is again blocked at this moment.
+
+TokenPlatform is also shown to users that has verified.
 
 NotAuthorized users will see "You need an Among Us account to play online."
 
@@ -41,9 +45,9 @@ Check TokenPlatform in Verify Response. Also present on the verisy message to pl
 ## Note - Read carefully
 ~~Currently the api can only show whether a player is using a real account to join the server, or they did not join the server.~~
 
-~~**Guest account is global prevented from the server** so the api can not detect it, and will not respond to guest account requests.~~
+**Guest account is global prevented from the server** so the api can not detect it, and will not respond to guest account requests.
 
-To check Guest account, you need to read **TokenPlatform**. "deviceid" in it is guest account. No other flags are provided for guest account.
+~~To check Guest account, you need to read **TokenPlatform**. "deviceid" in it is guest account. No other flags are provided for guest account.~~
 
 You can only see **NotVerified, HttpPending, Verified or Expired** from the api.
 
