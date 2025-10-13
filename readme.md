@@ -84,12 +84,15 @@ Leaving FriendCode empty or just don't include it to allow anyone to join, and t
 {
     "VerifyStatus": "Created",
     "VerifyCode": "ABCDEF",
+    "FriendCode": "",
     "ExpiresAt": "2025-02-03T11:43:08Z"
 }
 ```
 The expiration time is displayed in UTC and is 10 minutes after the request is created. 
 
 The verify code is the room code provided to the player.
+
+FriendCode will only appear if you preset it.
 
 ### GET
 Used to query the verify status of a verify request.
@@ -108,9 +111,12 @@ Used to query the verify status of a verify request.
 ```json
 {
     "VerifyStatus": "NotVerified",
-    "ExpiresAt": "2025-02-03T11:43:08Z"
+    "ExpiresAt": "2025-02-03T11:43:08Z",
+    "FriendCode": ""
 }
 ```
+
+FriendCode will show here if you preset it.
 
 **HttpPending**
 ```json
