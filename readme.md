@@ -64,9 +64,14 @@ All the requests should be sent with json and will be answered with json.
 
 ### PUT
 Used to create a verify request, respond with the verify code(also game/room code) created.
+
+You can set the value of FriendCode, this will only allow user with the same friendcode to use the verify code, others will just see GameNotFound.
+
+Leaving FriendCode empty or just don't include it to allow anyone to join, and the first will be accepted, others will just see GameNotFound.
 ```json
 {
-    "apikey": "api_key_here"
+    "ApiKey": "api_key_here",
+    "FriendCode": ""
 }
 ```
 
