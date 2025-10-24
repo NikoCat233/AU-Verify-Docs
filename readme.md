@@ -24,7 +24,7 @@ Verify success will only be shown once.
 
 ~~Guest account will see "You communication settings are blocking you from joining the game."~~
 
-~~Guest account is **no longer blocked** after 2025.2.23. To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account. ~~
+~~Guest account is **no longer blocked** after 2025.2.23. To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account.~~
 
 Guest account is again blocked at this moment.
 
@@ -316,5 +316,6 @@ This is the Platform officially provided by InnerSloth in game codes. We acquire
     }
 ```
 These platform strings is directly read from InnerSloth's http api. It is 100% accurate, showing the account type of the user and can not be spoofed. But we don't completely know how it matches Platforms flag provided in game codes and this list is also missing some of the strings.
+
 
 To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account.
