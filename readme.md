@@ -22,11 +22,7 @@ This feature is currently in beta stage. You need to contact @NikoCat233 on Disc
 ## User Verify Example
 Verify success will only be shown once. 
 
-~~Guest account will see "You communication settings are blocking you from joining the game."~~
-
-~~Guest account is **no longer blocked** after 2025.2.23. To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account. ~~
-
-Guest account is again blocked at this moment.
+Currently, guest accounts are blocked, and the "Verify API" using NikoAS will not respond to guest accounts. However, in the customized Niko server, administrators can choose whether or not to permit guest account verification according to their requirements.
 
 TokenPlatform is also shown to users that has verified.
 
