@@ -39,11 +39,11 @@ Check TokenPlatform in Verify Response. Also present on the verisy message to pl
 ![alt text](image-2.png)
 
 ## Note - Read carefully
-~~Currently the api can only show whether a player is using a real account to join the server, or they did not join the server.~~
+Currently the api can only show whether a player is using a real account to join the server, or they did not join the server.
 
-**Guest account is global prevented from the server** so the api can not detect it, and will not respond to guest account requests.
+**Guest account is global prevented from the server** so the api can not detect it, and will not respond to guest account requests. Unless the server administrator choose to allow guest accounts.
 
-~~To check Guest account, you need to read **TokenPlatform**. "deviceid" in it is guest account. No other flags are provided for guest account.~~
+To check Guest account, you need to read **TokenPlatform**. "deviceid" in it is guest account. No other flags are provided for guest account.
 
 You can only see **NotVerified, HttpPending, Verified or Expired** from the api.
 
