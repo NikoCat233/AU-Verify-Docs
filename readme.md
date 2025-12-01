@@ -208,8 +208,6 @@ Server error will also be answered by dotnet core with following format
         NotVerified,
         Verified,
         Expired,
-        BannedByServer, // Not used
-        BannedByEAC, // Not used
         NotFound,
         NotAuthorized,
         InternalServerError,
@@ -217,8 +215,6 @@ Server error will also be answered by dotnet core with following format
         HttpPending
     }
 ```
-BannedByServer(Banned by Niko), BannedByEAC(The Enhanced Network) is not added currently.
-
 To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account.
 
 ```codes
