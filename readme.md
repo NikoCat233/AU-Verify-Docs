@@ -11,6 +11,8 @@ This API allows players to complete verification themselves by entering the serv
 ## How to appeal for a api key?
 This feature is currently in beta stage. You need to contact @NikoCat233 on Discord for more details.
 
+Niko233's Servers official discord server: https://au.niko233.me/discord
+
 ## The verify process
 1. The bot creates a verification request with an HTTP PUT request, providing the API key and returning the verification code (same as the game code).
 2. The bot provides the game code to the player.
