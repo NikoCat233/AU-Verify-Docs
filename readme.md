@@ -14,7 +14,7 @@ This API allows players to complete verification themselves by entering the serv
 
 This feature is currently in beta stage. You need to contact @NikoCat233 on Discord for more details.
 
-Niko233's Servers official discord server: https://au.niko233.me/discord
+Niko233's Servers official discord server: https://au.niko233.top/discord
 
 ## The verify process
 
@@ -75,7 +75,7 @@ A verify code only takes the first account from the http part that joins the ser
 
 ### Request URL
 
-`https://au-verify.niko233.me/api/verify`
+`https://au-verify.niko233.top/api/verify`
 All the requests should be sent with json and will be answered with json.
 
 ### PUT
