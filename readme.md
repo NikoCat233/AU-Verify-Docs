@@ -1,28 +1,34 @@
 # NikoCat233's Impostor Server - au-verify endpoint api doc
+
 ## What does the endpint / api do?
-Verifying players' friend codes is a crucial requirement for many Among Us gaming groups. 
+
+Verifying players' friend codes is a crucial requirement for many Among Us gaming groups.
 
 This task often (unfortunately) has to be done manually. Manual verification is not only time-consuming and labor-intensive but also susceptible to deception by guest accounts and photoshopped images.
 
-To address the security issues of verification, improve review efficiency, and promote automation of the review process, Niko has developed an automated API based on the existing account verification feature of the Niko private server. 
+To address the security issues of verification, improve review efficiency, and promote automation of the review process, Niko has developed an automated API based on the existing account verification feature of the Niko private server.
 
 This API allows players to complete verification themselves by entering the server, replacing manual review, saving time, and preventing illegal deception.
 
 ## How to appeal for a api key?
+
 This feature is currently in beta stage. You need to contact @NikoCat233 on Discord for more details.
 
 Niko233's Servers official discord server: https://au.niko233.me/discord
 
 ## The verify process
+
 1. The bot creates a verification request with an HTTP PUT request, providing the API key and returning the verification code (same as the game code).
 2. The bot provides the game code to the player.
 3. The player joins Niko(AS) with the game code, server respond server ip and port to user, and put the info from http part auth to verify request.
 4. The player really joins the server from udp part. Udp part add more data to verify request and disconnect player with a message confirming that the verification is successful.
-5. The bot queries the verification results with an HTTP GET request, providing the API key and the verification code.
-6. After the verification process is finished, the bot can use an HTTP DELETE request, providing the API key and the verification code, to delete the verification request before it automatically expires.
+5. If `CallbackUrl` is provided, when verify status changes to `HttpPending` or `Verified`, the server calls your callback URL with `verifycode` and `verifystatus` (expects HTTP `200`, timeout 5 seconds, up to 2 attempts).
+6. The callback is only a notification. After receiving it, the bot should still query verification results with an HTTP GET request, providing the API key and the verification code.
+7. After the verification process is finished, the bot can use an HTTP DELETE request, providing the API key and the verification code, to delete the verification request before it automatically expires.
 
 ## User Verify Example
-Verify success will only be shown once. 
+
+Verify success will only be shown once.
 
 Currently, guest accounts are blocked, and the "Verify API" using NikoAS will not respond to guest accounts. However, in the customized Niko server, administrators can choose whether or not to permit guest account verification according to their requirements.
 
@@ -33,14 +39,20 @@ NotAuthorized users will see "You need an Among Us account to play online."
 In all other cases, "game not found" will be displayed.
 
 ### Verify Success
+
 ![alt text](image.png)
+
 ### Guest Account
+
 Check TokenPlatform in Verify Response. Also present on the verisy message to players.
 ![alt text](image-1.png)
+
 ### NotAuthorized
+
 ![alt text](image-2.png)
 
 ## Note - Read carefully
+
 Currently the api can only show whether a player is using a real account to join the server, or they did not join the server.
 
 **Guest account is global prevented from the server** so the api can not detect it, and will not respond to guest account requests. Unless the server administrator choose to allow guest accounts.
@@ -60,145 +72,189 @@ TokenPlatform in verify request is the platform got directly from InnerSloth api
 A verify code only takes the first account from the http part that joins the server with it. This means that if a player join the server with same verify code from multiple devices, or they share the code with others, once they put their code and is **handled by http part**, you can then only **get the first account** they try to sign in and their **alts will be rejected from the server and won't be logged**.
 
 ## API Endpoints
+
 ### Request URL
+
 `https://au-verify.niko233.me/api/verify`
 All the requests should be sent with json and will be answered with json.
 
 ### PUT
+
 Used to create a verify request, respond with the verify code(also game/room code) created.
 
 You can set the value of FriendCode, this will only allow user with the same friendcode to use the verify code, others will just see GameNotFound.
 
 Leaving FriendCode empty or just don't include it to allow anyone to join, and the first will be accepted, others will just see GameNotFound.
+
+You can also optionally include `CallbackUrl` in `PUT /api/verify`.  
+When the player joins the server and the status changes to `HttpPending` or `Verified`, the server will request `CallbackUrl` and append `verifycode` and `verifystatus` as query parameters.
+
 ```json
 {
-    "ApiKey": "api_key_here",
-    "FriendCode": ""
+  "ApiKey": "example",
+  "FriendCode": "",
+  "CallbackUrl": "https://example.com/callback?state=114514"
 }
 ```
 
+Callback examples:
+
+`https://example.com/callback?state=114514&verifycode=ABCDEF&verifystatus=httppending`  
+`https://example.com/callback?state=114514&verifycode=ABCDEF&verifystatus=verified`
+
+The callback mechanism is only used to notify your service that the player has reached a verification state. After receiving the callback, you should still query `GET /api/verify` by yourself to fetch and confirm the latest verification data.
+The callback requester expects HTTP `200` as success, uses a timeout of 5 seconds per request, and will try up to 2 times if needed.
+
+Please note:
+
+- `verifycode` is returned in uppercase.
+- `verifystatus` is returned in lowercase.
+- We recommend converting both fields to lowercase before processing.
+- We also recommend adding a random `state` for each verify request and validating it on callback. Our callback is a plain URL request with appended query parameters only, and does not include any other credential.
+
 #### Return
+
 ```json
 {
-    "VerifyStatus": "Created",
-    "VerifyCode": "ABCDEF",
-    "FriendCode": "",
-    "ExpiresAt": "2025-02-03T11:43:08Z"
+  "VerifyStatus": "Created",
+  "VerifyCode": "ABCDEF",
+  "FriendCode": "",
+  "ExpiresAt": "2025-02-03T11:43:08Z"
 }
 ```
-The expiration time is displayed in UTC and is 10 minutes after the request is created. 
+
+The expiration time is displayed in UTC and is 10 minutes after the request is created.
 
 The verify code is the room code provided to the player.
 
 FriendCode will only appear if you preset it.
 
 ### GET
+
 Used to query the verify status of a verify request.
 `?apikey=api_key_here&verifycode=ABCDEF`
 
 #### Return
+
 **Key not found**
+
 ```json
 {
-    "VerifyStatus": "NotFound",
-    "Message": "VerifyCode not found"
+  "VerifyStatus": "NotFound",
+  "Message": "VerifyCode not found"
 }
 ```
 
 **Not verified**
+
 ```json
 {
-    "VerifyStatus": "NotVerified",
-    "ExpiresAt": "2025-02-03T11:43:08Z",
-    "FriendCode": ""
+  "VerifyStatus": "NotVerified",
+  "ExpiresAt": "2025-02-03T11:43:08Z",
+  "FriendCode": ""
 }
 ```
 
 FriendCode will show here if you preset it.
 
 **HttpPending**
+
 ```json
 {
-    "VerifyStatus": "HttpPending",
-    "ExpiresAt": "2025-02-03T11:43:08Z",
-    "PlayerName": "Niko233",
-    "FriendCode": "***#****",
-    "Puid": "*********",
-    "HashedPuid": "****",
-    "HttpIp": "48.***.***.***",
-    "TokenPlatform": "steam"
+  "VerifyStatus": "HttpPending",
+  "ExpiresAt": "2025-02-03T11:43:08Z",
+  "PlayerName": "Niko233",
+  "FriendCode": "***#****",
+  "Puid": "*********",
+  "HashedPuid": "****",
+  "HttpIp": "48.***.***.***",
+  "TokenPlatform": "steam"
 }
 ```
 
 **Verified**
+
 ```json
 {
-    "VerifyStatus": "Verified",
-    "ExpiresAt": "2025-02-03T11:43:08Z",
-    "PlayerName": "Niko233",
-    "FriendCode": "***#****",
-    "Puid": "*********",
-    "HashedPuid": "****",
-    "HttpIp": "48.***.***.***",
-    "UdpIp": "113.***.***.***",
-    "TokenPlatform": "steam",
-    "UdpPlatform": "StandaloneSteamPC"
+  "VerifyStatus": "Verified",
+  "ExpiresAt": "2025-02-03T11:43:08Z",
+  "PlayerName": "Niko233",
+  "FriendCode": "***#****",
+  "Puid": "*********",
+  "HashedPuid": "****",
+  "HttpIp": "48.***.***.***",
+  "UdpIp": "113.***.***.***",
+  "TokenPlatform": "steam",
+  "UdpPlatform": "StandaloneSteamPC"
 }
 ```
+
 The fields `"ExpiresAt": "2025-02-03T11:43:08Z"`, `"FriendCode": "***#****"`, `"Puid": "*********"`, `"HashedPuid": "****"`, `"TokenPlatform": "steam"` will always be provided.
 
 **Expired**
+
 ```json
 {
-    "VerifyStatus": "Expired",
-    "ExpiresAt": "2025-02-03T11:43:08Z"
+  "VerifyStatus": "Expired",
+  "ExpiresAt": "2025-02-03T11:43:08Z"
 }
 ```
 
 ### DELETE
+
 Used to delete a verify request before it automatically expires. Suggest deleting instantly after you get all the necessary data.
+
 ```json
 {
-    "apikey": "api_key_here",
-    "verifycode": "abcdef"
+  "apikey": "api_key_here",
+  "verifycode": "abcdef"
 }
 ```
 
 #### Return
+
 **Key not found**
+
 ```json
 {
-    "VerifyStatus": "NotFound",
-    "Message": "VerifyCode not found"
+  "VerifyStatus": "NotFound",
+  "Message": "VerifyCode not found"
 }
 ```
 
 **Deleted success**
+
 ```json
 {
-    "VerifyStatus": "Deleted",
-    "Message": "VerifyCode deleted"
+  "VerifyStatus": "Deleted",
+  "Message": "VerifyCode deleted"
 }
 ```
 
 ### Other
+
 wrong api key
+
 ```json
 {
-    "VerifyStatus": "NotAuthorized",
-    "Message": "Unknown Api Token"
+  "VerifyStatus": "NotAuthorized",
+  "Message": "Unknown Api Token"
 }
 ```
+
 Internal server error
+
 ```json
 {
-    "VerifyStatus": "InternalServerError",
-    "Message": "Detailed Message"
+  "VerifyStatus": "InternalServerError",
+  "Message": "Detailed Message"
 }
 ```
+
 Server error will also be answered by dotnet core with following format
 
 ### Status Flags
+
 ```codes
     public enum VerifyStatus
     {
@@ -213,6 +269,7 @@ Server error will also be answered by dotnet core with following format
         HttpPending
     }
 ```
+
 To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account.
 
 ```codes
@@ -225,6 +282,7 @@ To check Guest account, you need to read TokenPlatform. "deviceid" in it is gues
         public string? VerifyCode { get; init; }
     }
 ```
+
 ```codes
     public sealed class VerifyResponse
     {
@@ -276,6 +334,7 @@ To check Guest account, you need to read TokenPlatform. "deviceid" in it is gues
         public string? UdpPlatform { get; init; }
     }
 ```
+
 VerifyRequest and VerifyResponse simply shows how the server will serialize and deserialize json from http requests.
 
 ```codes
@@ -294,6 +353,7 @@ VerifyRequest and VerifyResponse simply shows how the server will serialize and 
         Playstation,
     }
 ```
+
 This is the Platform officially provided by InnerSloth in game codes. We acquire it from udp join game part and client can spoof it with hack menu.
 
 ```codes
@@ -309,6 +369,7 @@ This is the Platform officially provided by InnerSloth in game codes. We acquire
         ## this list is incomplete, Niko never see console players' token.
     }
 ```
+
 These platform strings is directly read from InnerSloth's http api. It is 100% accurate, showing the account type of the user and can not be spoofed. But we don't completely know how it matches Platforms flag provided in game codes and this list is also missing some of the strings.
 
 To check Guest account, you need to read TokenPlatform. "deviceid" in it is guest account.
