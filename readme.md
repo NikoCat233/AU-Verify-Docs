@@ -1,3 +1,7 @@
+# 2026.10.31 We added v2 api which does not require player to add custom regions to function.
+
+See [v2 API documentation](./v2.md) for the friend-code verification flow, limitations, endpoints, and response examples. The existing documentation below describes the original v1 API.
+
 # NikoCat233's Impostor Server - au-verify endpoint api doc
 
 ## What does the endpint / api do?
